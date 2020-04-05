@@ -1,0 +1,25 @@
+{
+  "name": "ukramer/big-data-table",
+  "description": "Table helper for big data analysis",
+  "keywords": [],
+  "homepage": "http://github.com/ukramer/big-data-table",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ueli Kramer",
+      "email": "ueli@kramer-it.ch",
+      "homepage": "https://www.kramer-it.ch"
+    }
+  ],
+  "require": {
+    "php": "^7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "BigDataTable\\": "src/BigDataTable"
+    }
+  },
+  "scripts": {
+  }
+}
