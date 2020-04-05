@@ -7,29 +7,58 @@ class DataGroup extends Group implements \JsonSerializable
     /**
      * @var Group[]
      */
-    private $childGroups;
+    private $children;
 
-    public function __construct($title, $description = '')
-    {
-        $this->title = $title;
-        $this->description = $description;
-    }
+    /**
+     * @var array
+     */
+    protected $options = [
+        'cssClass' => '',
+        'sum' => false,
+        'showPercentageDiff' => false,
+    ];
 
     public function addChild(Group $child): Group
     {
-        $this->childGroups[] = $child;
+        $this->children[] = $child;
         $child->setParent($this);
         return $child;
     }
 
     public function removeChild(Group $child): void
     {
-        $i = array_search($child, $this->childGroups);
+        $i = array_search($child, $this->children);
         if ($i === false) {
             throw new \Exception('Child to remove not found');
         }
-        $this->childGroups[$i]->setParent(null);
-        unset($this->childGroups[$i]);
+        $this->children[$i]->setParent(null);
+        unset($this->children[$i]);
+    }
+
+    public function getSumByYear(int $year): int
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getSumByYear($year);
+        }
+        return $sum;
+    }
+
+    public function getSumByYearAndMonth(int $year, int $month): int
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getSumByYearAndMonth($year, $month);
+        }
+        return $sum;
+    }
+
+    /**
+     * @return Group[]
+     */
+    public function getChildren(): array
+    {
+        return $this->children;
     }
 
     public function createSubGroup($title, $description = ''): DataGroup
@@ -44,6 +73,21 @@ class DataGroup extends Group implements \JsonSerializable
         /** @var Data $ret */
         $ret = $this->addChild($data);
         return $ret;
+    }
+
+    public function getCssClass(): string
+    {
+        return $this->options['cssClass'];
+    }
+
+    public function isSumActive(): bool
+    {
+        return $this->options['sum'];
+    }
+
+    public function isShowPercentageDiffActive(): bool
+    {
+        return $this->options['showPercentageDiff'];
     }
 
     /**

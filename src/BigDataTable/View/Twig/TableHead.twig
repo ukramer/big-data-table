@@ -1,0 +1,25 @@
+<thead>
+<tr>
+    <th></th>
+
+    <!-- year part -->
+    {% for year in years %}
+        <th class="big-data-table-year-column">{{ year }}</th>
+    {% endfor %}
+    {% if showDiff %}
+        <th class="big-data-table-year-column"></th>
+    {% endif %}
+
+    <!-- months part -->
+    {% set i = 0 %}
+    {% for month in months %}
+    <th>{{ month['name'] }}</th>
+        {% if showDiff %}
+            {% set i = i + 1 %}
+            {% if i % 2 == 0 %}
+            <th></th>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</tr>
+</thead>

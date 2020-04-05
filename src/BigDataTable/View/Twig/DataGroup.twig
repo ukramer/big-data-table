@@ -1,0 +1,58 @@
+{% macro recursiveDataGroup(dataGroup, numCols, years, months, showDiff, diffYear, level) %}
+    {% import _self as self %}
+    {% from 'Diff.twig' import diff %}
+
+    <tr class="big-data-table-data-group-title level-{{ level }} {{ dataGroup.getCssClass() }}">
+        <td
+                {% if not dataGroup.isSumActive() %}colspan="{{ numCols }}"{% endif %}
+                {% if dataGroup.getDescription() %}data-toggle="tooltip" data-placement="left" data-title="{{ dataGroup.getDescription() }}"{% endif %}
+        >
+            <span>{{ dataGroup.getTitle() }}</span>
+        </td>
+        {% if dataGroup.isSumActive() %}
+            {% for year in years %}
+                <td class="big-data-table-year-column">{{ dataGroup.getSumByYear(year) }}</td>
+            {% endfor %}
+
+            {% if showDiff and diff is defined %}
+                <td class="big-data-table-year-column">
+                    {{ diff(dataGroup.getDiffOfYear(years[0], years[1])) }}
+                </td>
+            {% endif %}
+
+            {% set i = 0 %}
+            {% for month in months %}
+                <td>{{ dataGroup.getSumByYearAndMonth(month['year'], month['month']) }}</td>
+
+                {% if showDiff and diff is defined %}
+                    {% set i = i + 1 %}
+                    {% if i % 2 == 0 %}
+                        <td>{{ diff(dataGroup.getDiffOfMonth(years[0], years[1], month['month'])) }}</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </tr>
+
+    {% for dataSubGroup in dataGroup.getChildren() %}
+        {% if dataSubGroup.isGroup() %}
+            {{ self.recursiveDataGroup(dataSubGroup, numCols, years, months, showDiff, diffYear, level+1) }}
+        {% else %}
+            {% set data = dataSubGroup %}
+            {% include 'Data.twig' %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% from _self import recursiveDataGroup %}
+
+{% set i = 1 %}
+{% for dataGroup in dataGroups %}
+    {{ recursiveDataGroup(dataGroup, numCols, years, months, showDiff, diffYear, 1) }}
+    {% if i != dataGroups|length %}
+        {% set i = i + 1 %}
+        <tr>
+            <td colspan="{{ numCols }}"></td>
+        </tr>
+    {% endif %}
+{% endfor %}

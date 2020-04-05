@@ -56,19 +56,35 @@ class Record implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getDateString(): string
+    public function getYear(): int
     {
-        return $this->date->format('Y-m-d');
+        return intval($this->date->format('Y'));
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getHourString(): string
+    public function getMonth(): int
     {
-        return $this->date->format('H');
+        return intval($this->date->format('m'));
+    }
+
+    /**
+     * @return int
+     */
+    public function getDay(): int
+    {
+        return intval($this->date->format('d'));
+    }
+
+    /**
+     * @return int
+     */
+    public function getHour(): int
+    {
+        return intval($this->date->format('H'));
     }
 
     /**

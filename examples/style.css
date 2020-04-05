@@ -1,0 +1,59 @@
+html, body {
+    font-size: 10px;
+}
+
+.big-data-table .big-data-table-data-group-title.level-1 td {
+    font-weight: bold;
+    background: #ccc;
+}
+
+.big-data-table .big-data-table-data-group-title.level-2 td {
+    font-style: italic;
+    background: #f2f2f2;
+}
+
+.big-data-table .big-data-table-year-column {
+    background: #eee;
+}
+
+.big-data-table tbody tr td,
+.big-data-table thead tr th {
+    text-align: right;
+}
+
+table tbody tr td:first-child {
+    text-align: left;
+}
+
+.big-data-table td[data-toggle=tooltip] span,
+.big-data-table th[data-toggle=tooltip] span,
+.big-data-table span[data-toggle=tooltip] {
+    border-bottom: 1px dotted;
+    cursor: pointer;
+}
+
+.big-data-table .big-data-table-diff-gt,
+.big-data-table .big-data-table-diff-eq,
+.big-data-table .big-data-table-diff-lt {
+    font-size: 0.7em;
+    display: inline-block;
+    float: left;
+}
+
+.big-data-table .big-data-table-diff-gt {
+    color: green;
+}
+
+.big-data-table .big-data-table-diff-eq {
+    color: orange;
+}
+
+.big-data-table .big-data-table-diff-lt {
+    color: red;
+}
+
+.big-data-table .big-data-table-percentage-diff {
+    font-style: italic;
+    font-size: smaller;
+    color: rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,22 @@
+{% macro diff(diff, isCurrent = true) %} <!-- @todo: implement isCurrent correctly -->
+    {% set diffType = 'eq' %}
+    {% set arrowType = 'right' %}
+
+    {% if diff > 0 %}
+        {% set diffType = 'gt' %}
+        {% set arrowType = 'up' %}
+    {% elseif diff < 0 %}
+        {% set diffType = 'lt' %}
+        {% set arrowType = 'down' %}
+    {% endif %}
+
+
+    <span
+            {% if isCurrent %}
+                data-toggle="tooltip"
+                data-title="Calculated with the previous year's value in the same ratio (current month / year)"
+            {% endif %}
+          class="big-data-table-diff-{{ diffType }}">
+        <i class="fa fa-arrow-{{ arrowType }}"></i> {{ diff }}%
+    </span>
+{% endmacro %}

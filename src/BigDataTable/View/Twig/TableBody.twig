@@ -1,0 +1,11 @@
+<tbody>
+{% set numYears = years|length %}
+{% set numMonths = months|length %}
+{% set numCols = numYears+numMonths+1 %}
+
+{% if showDiff %}
+    {% set numCols = numCols+1+numMonths/2 %}
+{% endif %}
+
+{% include 'DataGroup.twig' %}
+</tbody>
