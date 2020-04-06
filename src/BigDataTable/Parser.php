@@ -2,6 +2,7 @@
 
 namespace BigDataTable;
 
+use Exception;
 use JsonSerializable;
 
 /**
@@ -17,6 +18,7 @@ abstract class Parser implements JsonSerializable
      *
      * @param Table $table
      * @return string
+     * @throws Exception
      * @since 1.0.0
      */
     abstract public function parse(Table $table): string;

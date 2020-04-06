@@ -4,7 +4,7 @@ namespace BigDataTable\Parser;
 
 use BigDataTable\Parser;
 use BigDataTable\Table;
-use Exception as ExceptionAlias;
+use Exception;
 use Twig\Environment;
 use Twig\Error\Error;
 use Twig\Loader\FilesystemLoader;
@@ -64,7 +64,7 @@ class TwigParser extends Parser
         try {
             $ret = $this->twig->render('Table.twig', $vars);
         } catch (Error $e) {
-            throw new ExceptionAlias('Parsing error by Twig: ' . $e->getMessage());
+            throw new Exception('Parsing error by Twig: ' . $e->getMessage());
         }
         return $ret;
     }
