@@ -1,4 +1,4 @@
-{% macro recursiveDataGroup(dataGroup, numCols, years, months, showDiff, diffYear, level) %}
+{% macro recursiveDataGroup(dataGroup, currentYear, currentMonth, numCols, years, months, showDiff, diffYear, level) %}
     {% import _self as self %}
     {% from 'Diff.twig' import diff %}
 
@@ -16,7 +16,7 @@
 
             {% if showDiff and diff is defined %}
                 <td class="big-data-table-year-column">
-                    {{ diff(dataGroup.getDiffOfYear(years[0], years[1])) }}
+                    {{ diff(dataGroup.getDiffOfYear(years[0], years[1]), years[1] == currentYear) }}
                 </td>
             {% endif %}
 
@@ -27,7 +27,7 @@
                 {% if showDiff and diff is defined %}
                     {% set i = i + 1 %}
                     {% if i % 2 == 0 %}
-                        <td>{{ diff(dataGroup.getDiffOfMonth(years[0], years[1], month['month'])) }}</td>
+                        <td>{{ diff(dataGroup.getDiffOfMonth(years[0], years[1], month['month']), month['month'] == currentMonth and month['year'] == currentYear) }}</td>
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -36,7 +36,7 @@
 
     {% for dataSubGroup in dataGroup.getChildren() %}
         {% if dataSubGroup.isGroup() %}
-            {{ self.recursiveDataGroup(dataSubGroup, numCols, years, months, showDiff, diffYear, level+1) }}
+            {{ self.recursiveDataGroup(dataSubGroup, currentYear, currentMonth, numCols, years, months, showDiff, diffYear, level+1) }}
         {% else %}
             {% set data = dataSubGroup %}
             {% include 'Data.twig' %}
@@ -48,7 +48,7 @@
 
 {% set i = 1 %}
 {% for dataGroup in dataGroups %}
-    {{ recursiveDataGroup(dataGroup, numCols, years, months, showDiff, diffYear, 1) }}
+    {{ recursiveDataGroup(dataGroup, currentYear, currentMonth, numCols, years, months, showDiff, diffYear, 1) }}
     {% if i != dataGroups|length %}
         {% set i = i + 1 %}
         <tr>

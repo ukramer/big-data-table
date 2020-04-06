@@ -1,12 +1,21 @@
-{% macro diff(diff, isCurrent = true) %} <!-- @todo: implement isCurrent correctly -->
-    {% set diffType = 'eq' %}
-    {% set arrowType = 'right' %}
+{% macro diff(diff, isCurrent = true, invertColor = false) %}
+    {% set diffType, arrowType = 'orange', 'right' %}
 
     {% if diff > 0 %}
-        {% set diffType = 'gt' %}
+        {% if invertColor %}
+            {% set diffType = 'red' %}
+        {% else %}
+            {% set diffType = 'green' %}
+        {% endif %}
+
         {% set arrowType = 'up' %}
     {% elseif diff < 0 %}
-        {% set diffType = 'lt' %}
+        {% if invertColor %}
+            {% set diffType = 'green' %}
+        {% else %}
+            {% set diffType = 'red' %}
+        {% endif %}
+
         {% set arrowType = 'down' %}
     {% endif %}
 
@@ -14,7 +23,7 @@
     <span
             {% if isCurrent %}
                 data-toggle="tooltip"
-                data-title="Calculated with the previous year's value in the same ratio (current month / year)"
+                data-title="Calculated with a potential forecast to end of period."
             {% endif %}
           class="big-data-table-diff-{{ diffType }}">
         <i class="fa fa-arrow-{{ arrowType }}"></i> {{ diff }}%

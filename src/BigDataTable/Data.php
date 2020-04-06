@@ -2,26 +2,37 @@
 
 namespace BigDataTable;
 
-abstract class Data extends Group implements \JsonSerializable
+use Exception;
+use InvalidArgumentException;
+use JsonSerializable;
+
+/**
+ * Data Object which can hold multiple records (over a long term date period).
+ *
+ * Literally a Data object is representing a row in the table and holds many
+ * different Record objects.
+ *
+ * @package BigDataTable
+ * @since 1.0.0
+ */
+abstract class Data extends Group implements JsonSerializable
 {
     const SUM_TYPE_SUM = 0;
     const SUM_TYPE_LAST = 1;
     const SUM_TYPE_AVG = 2;
-
-    /**
-     * @var int type of sum
-     */
-    private $sumType = self::SUM_TYPE_SUM;
-
     /**
      * @var array
      */
     protected $options = [
         'cssClass' => '',
+        'invertColor' => false,
     ];
-
     /**
-     * @var Record[][]
+     * @var int type of sum
+     */
+    private $sumType = self::SUM_TYPE_SUM;
+    /**
+     * @var Record[][][][]
      */
     private $records = [];
 
@@ -76,7 +87,7 @@ abstract class Data extends Group implements \JsonSerializable
     public function removeRecord(Record $record): void
     {
         if (!$this->hasRecord($record)) {
-            throw new \InvalidArgumentException('Record not part of Data');
+            throw new InvalidArgumentException('Record not part of Data');
         }
         $record->setData(null);
         unset($this->records[$record->getYear()][$record->getMonth()][$record->getDay()][$record->getHour()]);
@@ -91,16 +102,21 @@ abstract class Data extends Group implements \JsonSerializable
         return isset($this->records[$record->getYear()][$record->getMonth()][$record->getDay()][$record->getHour()]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSumByYear(int $year): int
     {
         switch ($this->sumType) {
             case self::SUM_TYPE_SUM:
                 $sum = 0;
                 /** @var Record $record */
-                foreach ($this->records[$year] as $monthRecords) {
-                    foreach ($monthRecords as $dayRecords) {
-                        foreach ($dayRecords as $record) {
-                            $sum += $record->getValue();
+                if (!empty($this->records)) {
+                    foreach ($this->records[$year] as $monthRecords) {
+                        foreach ($monthRecords as $dayRecords) {
+                            foreach ($dayRecords as $record) {
+                                $sum += $record->getValue();
+                            }
                         }
                     }
                 }
@@ -124,25 +140,38 @@ abstract class Data extends Group implements \JsonSerializable
                 return $i === 0 ? 0 : intval($sum / $i);
                 break;
             default:
-                throw new \Exception('Sum type: ' . $this->sumType . ' not implemented');
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
                 break;
         }
     }
 
+    /**
+     * Return the last record of a year.
+     * This is used for data which is cumulative and where the data is a snapshot at a specific time.
+     *
+     * @param int $year
+     * @return Record|null
+     * @since 1.0.0
+     */
     protected function getLastRecordOfYear(int $year): ?Record
     {
         // get value of last hour of last day of last month in year
         return end(end(end($this->records[$year])));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSumByYearAndMonth(int $year, int $month): int
     {
         switch ($this->sumType) {
             case self::SUM_TYPE_SUM:
                 $sum = 0;
-                foreach ($this->records[$year][$month] as $dayRecords) {
-                    foreach ($dayRecords as $record) {
-                        $sum += $record->getValue();
+                if (!empty($this->records[$year][$month])) {
+                    foreach ($this->records[$year][$month] as $dayRecords) {
+                        foreach ($dayRecords as $record) {
+                            $sum += $record->getValue();
+                        }
                     }
                 }
                 return $sum;
@@ -165,30 +194,64 @@ abstract class Data extends Group implements \JsonSerializable
                 return $i === 0 ? 0 : intval($sum / $i);
                 break;
             default:
-                throw new \Exception('Sum type: ' . $this->sumType . ' not implemented');
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
                 break;
         }
     }
 
+    /**
+     * Return the last record of a year and month.
+     * This is used for data which is cumulative and where the data is a snapshot at a specific time.
+     *
+     * @param int $year
+     * @param int $month
+     * @return Record|null
+     * @since 1.0.0
+     */
     protected function getLastRecordOfYearAndMonth(int $year, int $month): ?Record
     {
         // get value of last hour of last day of last month in year
         return end(end($this->records[$year][$month]));
     }
 
+    /**
+     * Format value for display in the table.
+     * This method gets overwritten by specific data objects.
+     *
+     * @param int $value The value as integer number.
+     * @return string The value as string for display in the table.
+     * @since 1.0.0
+     */
     public function format(int $value): string
     {
         return (string)$value;
     }
 
+    /**
+     * @return bool TRUE if the Sum Type should be the average.
+     * @since 1.0.0
+     */
+    public function isSumTypeAvg(): bool
+    {
+        return $this->sumType === self::SUM_TYPE_AVG;
+    }
+
+    /**
+     * @return string Get the value of the option "cssClass".
+     * @since 1.0.0
+     */
     public function getCssClass(): string
     {
         return $this->options['cssClass'];
     }
 
-    public function isSumTypeAvg(): bool
+    /**
+     * @return bool Get the value of the option "invertColor".
+     * @since 1.0.0
+     */
+    public function isInvertColor(): bool
     {
-        return $this->sumType === self::SUM_TYPE_AVG;
+        return $this->options['invertColor'];
     }
 
     /**

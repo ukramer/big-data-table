@@ -2,7 +2,18 @@
 
 namespace BigDataTable;
 
-class Table implements \JsonSerializable
+use Exception;
+use JsonSerializable;
+
+/**
+ * This Table class can have multiple data groups and a parser.
+ *
+ * The parser is necessary if a HTML should be printed out. If only JSON is wanted, there is no need for a parser.
+ *
+ * @package BigDataTable\Data
+ * @since 1.0.0
+ */
+class Table implements JsonSerializable
 {
     /**
      * @var DataGroup[]
@@ -12,7 +23,9 @@ class Table implements \JsonSerializable
      * @var Parser|null
      */
     private $parser;
-
+    /**
+     * @var array
+     */
     private $options = [
         'cssClass' => 'table table-condensed',
         'year' => 0, // default: current year
@@ -20,6 +33,11 @@ class Table implements \JsonSerializable
         'showDiff' => false, // default: false (deactivated)
     ];
 
+    /**
+     * @param Parser|null $parser
+     * @param array $options Possible options: cssClass (string, default "table table-condensed"), year (int, 0 = current year), diffYear (int, 0 = deactivated), showDiff (bool => deactivated)
+     * @since 1.0.0
+     */
     public function __construct(?Parser $parser = null, $options = [])
     {
         if ($parser) {
@@ -49,16 +67,23 @@ class Table implements \JsonSerializable
         $this->dataGroups = $dataGroups;
     }
 
+    /**
+     * @param DataGroup $dataGroup
+     */
     public function addDataGroup(DataGroup $dataGroup): void
     {
         $this->dataGroups[] = $dataGroup;
     }
 
+    /**
+     * @param DataGroup $dataGroup
+     * @throws Exception
+     */
     public function removeDataGroup(DataGroup $dataGroup): void
     {
         $i = array_search($dataGroup, $this->dataGroups);
         if ($i === false) {
-            throw new \Exception('Child to remove not found');
+            throw new Exception('Child to remove not found');
         }
         unset($this->dataGroups[$i]);
     }
@@ -79,17 +104,12 @@ class Table implements \JsonSerializable
         $this->parser = $parser;
     }
 
-    public function getYears(): array
-    {
-        $years = [];
-        if ($this->options['diffYear'] !== 0) {
-            $years[] = $this->options['diffYear'];
-        }
-        $years[] = $this->options['year'] === 0 ? date('Y') : $this->options['year'];
-        sort($years);
-        return $years;
-    }
-
+    /**
+     * Gives the months that should be displayed in the table based on the options.
+     *
+     * @return array
+     * @since 1.0.0
+     */
     public function getMonths(): array
     {
         $monthCount = $this->options['year'] === 0 || $this->options['year'] === date('Y') ? date('m') : 12;
@@ -107,31 +127,84 @@ class Table implements \JsonSerializable
         return $months;
     }
 
+    /**
+     * Gives the years that should be displayed in the table based on the options.
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    public function getYears(): array
+    {
+        $years = [];
+        if ($this->options['diffYear'] !== 0) {
+            $years[] = $this->options['diffYear'];
+        }
+        $years[] = $this->options['year'] === 0 ? date('Y') : $this->options['year'];
+        sort($years);
+        return array_unique($years);
+    }
+
+    /**
+     * Return the value of the option "diffYear".
+     *
+     * @return int
+     * @since 1.0.0
+     */
     public function getDiffYear(): int
     {
         return $this->options['diffYear'];
     }
 
+    /**
+     * Return the value of the option "showDiff".
+     *
+     * @return bool
+     * @since 1.0.0
+     */
     public function showDiff(): bool
     {
         return $this->options['showDiff'] && $this->options['diffYear'];
     }
 
-    public function createGroup(string $title, ?string $description = '', ?array $options = []): DataGroup
+    /**
+     * Directly creates a new DataGroup and adds it to the data groups of the table.
+     *
+     * Alternatively a DataGroup can be created and added manually as DataGroup to the table object.
+     *
+     * @param string $title
+     * @param string $description
+     * @param array $options
+     * @return DataGroup
+     * @since 1.0.0
+     */
+    public function createGroup(string $title, string $description = '', array $options = []): DataGroup
     {
         $dataGroup = new DataGroup($title, $description, $options);
         $this->dataGroups[] = $dataGroup;
         return $dataGroup;
     }
 
+    /**
+     * Parse the table with help of the parser provided at instantiation.
+     *
+     * @return string
+     * @throws Exception
+     * @since 1.0.0
+     */
     public function parse()
     {
-        if (!$this->parser) {
-            throw new \Exception('No Parser configured!');
+        if (!$this->parser || !($this->parser instanceof Parser)) {
+            throw new Exception('No Parser configured!');
         }
         return $this->parser->parse($this);
     }
 
+    /**
+     * Return the value of the option "cssClass".
+     *
+     * @return string
+     * @since 1.0.0
+     */
     public function getCssClass(): string
     {
         return $this->options['cssClass'];

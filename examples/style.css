@@ -1,7 +1,3 @@
-html, body {
-    font-size: 10px;
-}
-
 .big-data-table .big-data-table-data-group-title.level-1 td {
     font-weight: bold;
     background: #ccc;
@@ -21,7 +17,7 @@ html, body {
     text-align: right;
 }
 
-table tbody tr td:first-child {
+.big-tdata-table tbody tr td:first-child {
     text-align: left;
 }
 
@@ -32,23 +28,23 @@ table tbody tr td:first-child {
     cursor: pointer;
 }
 
-.big-data-table .big-data-table-diff-gt,
-.big-data-table .big-data-table-diff-eq,
-.big-data-table .big-data-table-diff-lt {
+.big-data-table .big-data-table-diff-green,
+.big-data-table .big-data-table-diff-orange,
+.big-data-table .big-data-table-diff-red {
     font-size: 0.7em;
     display: inline-block;
     float: left;
 }
 
-.big-data-table .big-data-table-diff-gt {
+.big-data-table .big-data-table-diff-green {
     color: green;
 }
 
-.big-data-table .big-data-table-diff-eq {
+.big-data-table .big-data-table-diff-orange {
     color: orange;
 }
 
-.big-data-table .big-data-table-diff-lt {
+.big-data-table .big-data-table-diff-red {
     color: red;
 }
 

@@ -24,7 +24,7 @@
 
     {% if showDiff and diff is defined %}
         <td class="big-data-table-year-column">
-            {{ diff(data.getDiffOfYear(years[0], years[1])) }}
+            {{ diff(data.getDiffOfYear(years[0], years[1]), years[1] == currentYear, data.isInvertColor()) }}
         </td>
     {% endif %}
 
@@ -45,7 +45,7 @@
         {% if showDiff and diff is defined %}
             {% set i = i + 1 %}
             {% if i % 2 == 0 %}
-                <td>{{ diff(data.getDiffOfMonth(years[0], years[1], month['month'])) }}</td>
+                <td>{{ diff(data.getDiffOfMonth(years[0], years[1], month['month']), month['month'] == currentMonth and month['year'] == currentYear, data.isInvertColor()) }}</td>
             {% endif %}
         {% endif %}
     {% endfor %}

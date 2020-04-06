@@ -2,25 +2,42 @@
 
 namespace BigDataTable;
 
-use \DateTime;
+use DateTime;
+use JsonSerializable;
 
-class Record implements \JsonSerializable
+/**
+ * This Record class contains one data value for a specific date and time.
+ *
+ * Value is an integer value every-time. There is no support for floats.
+ *
+ * @package BigDataTable\Data
+ * @since 1.0.0
+ */
+class Record implements JsonSerializable
 {
     /**
      * @var Data
      */
     private $data;
-
     /**
      * @var DateTime
      */
     private $date;
-
     /**
      * @var int
      */
     private $value;
 
+    /**
+     * Constructor for a new Record object.
+     *
+     * This constructor cares about the composition of a record and data object if a data object is provided.
+     *
+     * @param DateTime $date
+     * @param int $value
+     * @param Data|null $data
+     * @since 1.0.0
+     */
     public function __construct(DateTime $date, int $value, ?Data $data = null)
     {
         $this->date = $date;
@@ -56,6 +73,14 @@ class Record implements \JsonSerializable
     }
 
     /**
+     * @param DateTime $date
+     */
+    public function setDate(DateTime $date): void
+    {
+        $this->date = $date;
+    }
+
+    /**
      * @return int
      */
     public function getYear(): int
@@ -85,14 +110,6 @@ class Record implements \JsonSerializable
     public function getHour(): int
     {
         return intval($this->date->format('H'));
-    }
-
-    /**
-     * @param DateTime $date
-     */
-    public function setDate(DateTime $date): void
-    {
-        $this->date = $date;
     }
 
     /**
