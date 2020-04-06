@@ -14,7 +14,11 @@
 
             {% if dataGroup.isShowPercentageDiffActive() %}
                 {% set dataGroupSum = dataGroup.getSumByYear(year) %}
-                {% set percentageDiff = dataSum/dataGroupSum*100 %}
+                {% if dataGroupSum == 0 %}
+                    {% set percentageDiff = 0 %}
+                {% else %}
+                    {% set percentageDiff = dataSum/dataGroupSum*100 %}
+                {% endif %}
                 <span class="big-data-table-percentage-diff">({{ percentageDiff|round }}%)</span>
             {% endif %}
 
@@ -35,7 +39,11 @@
 
             {% if dataGroup.isShowPercentageDiffActive() %}
                 {% set dataGroupSum = dataGroup.getSumByYearAndMonth(month['year'], month['month']) %}
-                {% set percentageDiff = dataSum/dataGroupSum*100 %}
+                {% if dataGroupSum == 0 %}
+                    {% set percentageDiff = 0 %}
+                {% else %}
+                    {% set percentageDiff = dataSum/dataGroupSum*100 %}
+                {% endif %}
                 <span class="big-data-table-percentage-diff">({{ percentageDiff|round }}%)</span>
             {% endif %}
 
