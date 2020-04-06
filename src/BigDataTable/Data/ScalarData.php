@@ -15,4 +15,11 @@ use BigDataTable\Data;
  */
 class ScalarData extends Data
 {
+    /**
+     * @inheritDoc
+     */
+    public function format(int $value): string
+    {
+        return number_format($value, 0, '', '\'');
+    }
 }

@@ -112,7 +112,7 @@ class Table implements JsonSerializable
      */
     public function getMonths(): array
     {
-        $monthCount = $this->options['year'] === 0 || $this->options['year'] === date('Y') ? date('m') : 12;
+        $monthCount = $this->options['year'] === 0 || $this->options['year'] == date('Y') ? date('m') : 12;
         $years = $this->getYears();
         $months = [];
         foreach (range($monthCount, 1) as $month) {
