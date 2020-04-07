@@ -15,7 +15,7 @@ class PercentageData extends Data
     /**
      * @inheritDoc
      */
-    public function format(int $value): string
+    public static function format(int $value): string
     {
         return parent::format($value) . '%';
     }

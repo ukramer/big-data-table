@@ -35,6 +35,7 @@ class TwigParser extends Parser
         $loader = new FilesystemLoader($rootPath . '/View/Twig');
         $this->twig = new Environment($loader, [
             'cache' => false,
+            'debug' => true,
         ]);
     }
 

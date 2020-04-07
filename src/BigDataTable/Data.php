@@ -230,7 +230,7 @@ abstract class Data extends Group implements JsonSerializable
      * @return string The value as string for display in the table.
      * @since 1.0.0
      */
-    public function format(int $value): string
+    public static function format(int $value): string
     {
         return (string)$value;
     }

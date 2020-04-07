@@ -2,6 +2,7 @@
 
 namespace BigDataTable;
 
+use BigDataTable\Data\ScalarData;
 use Exception;
 use JsonSerializable;
 
@@ -24,6 +25,7 @@ class DataGroup extends Group implements JsonSerializable
         'cssClass' => '',
         'sum' => false,
         'showPercentageDiff' => false,
+        'sumDataTypeFormatter' => ScalarData::class,
     ];
     /**
      * @var Group[]
@@ -146,6 +148,32 @@ class DataGroup extends Group implements JsonSerializable
     public function isShowPercentageDiffActive(): bool
     {
         return $this->options['showPercentageDiff'];
+    }
+
+    /**
+     * Return the value of the option "sumDataTypeFormatter".
+     *
+     * @return string
+     * @since 1.0.0
+     */
+    public function getSumDataTypeFormatter(): string
+    {
+        return $this->options['sumDataTypeFormatter'];
+    }
+
+    /**
+     * Format the sums of a data group.
+     *
+     * @param int $value
+     * @return string
+     */
+    public function format(int $value): string
+    {
+        if (class_exists($this->getSumDataTypeFormatter())) {
+            $function = $this->getSumDataTypeFormatter() . '::format';
+            $value = call_user_func($function, $value);
+        }
+        return (string)$value;
     }
 
     /**

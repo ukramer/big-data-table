@@ -11,7 +11,7 @@
         </td>
         {% if dataGroup.isSumActive() %}
             {% for year in years %}
-                <td class="big-data-table-year-column">{{ dataGroup.getSumByYear(year) }}</td>
+                <td class="big-data-table-year-column">{{ dataGroup.format(dataGroup.getSumByYear(year)) }}</td>
             {% endfor %}
 
             {% if showDiff and diff is defined %}
@@ -22,7 +22,7 @@
 
             {% set i = 0 %}
             {% for month in months %}
-                <td>{{ dataGroup.getSumByYearAndMonth(month['year'], month['month']) }}</td>
+                <td>{{ dataGroup.format(dataGroup.getSumByYearAndMonth(month['year'], month['month'])) }}</td>
 
                 {% if showDiff and diff is defined %}
                     {% set i = i + 1 %}
