@@ -123,7 +123,8 @@ abstract class Data extends Group implements JsonSerializable
                 return $sum;
                 break;
             case self::SUM_TYPE_LAST:
-                return intval($this->getLastRecordOfYear($year)->getValue());
+                $lastRecord = $this->getLastRecordOfYear($year);
+                return $lastRecord ? intval($lastRecord->getValue()) : 0;
                 break;
             case self::SUM_TYPE_AVG:
                 $sum = 0;
@@ -176,7 +177,8 @@ abstract class Data extends Group implements JsonSerializable
                 }
                 return $sum;
             case self::SUM_TYPE_LAST:
-                return intval($this->getLastRecordOfYearAndMonth($year, $month)->getValue());
+                $lastRecord = $this->getLastRecordOfYearAndMonth($year, $month);
+                return $lastRecord ? intval($lastRecord->getValue()) : 0;
                 break;
             case self::SUM_TYPE_AVG:
                 $sum = 0;
