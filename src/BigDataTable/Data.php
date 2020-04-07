@@ -157,6 +157,9 @@ abstract class Data extends Group implements JsonSerializable
     protected function getLastRecordOfYear(int $year): ?Record
     {
         // get value of last hour of last day of last month in year
+        if (empty($this->records[$year])) {
+            return null;
+        }
         return end(end(end($this->records[$year])));
     }
 
@@ -213,6 +216,9 @@ abstract class Data extends Group implements JsonSerializable
     protected function getLastRecordOfYearAndMonth(int $year, int $month): ?Record
     {
         // get value of last hour of last day of last month in year
+        if (empty($this->records[$year][$month])) {
+            return null;
+        }
         return end(end($this->records[$year][$month]));
     }
 
