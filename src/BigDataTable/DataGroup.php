@@ -166,6 +166,7 @@ class DataGroup extends Group implements JsonSerializable
      *
      * @param int $value
      * @return string
+     * @since 1.0.0
      */
     public function format(int $value): string
     {
