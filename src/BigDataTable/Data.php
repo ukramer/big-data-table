@@ -111,7 +111,7 @@ abstract class Data extends Group implements JsonSerializable
             case self::SUM_TYPE_SUM:
                 $sum = 0;
                 /** @var Record $record */
-                if (!empty($this->records)) {
+                if (!empty($this->records[$year])) {
                     foreach ($this->records[$year] as $monthRecords) {
                         foreach ($monthRecords as $dayRecords) {
                             foreach ($dayRecords as $record) {
@@ -130,11 +130,13 @@ abstract class Data extends Group implements JsonSerializable
                 $sum = 0;
                 $i = 0;
                 /** @var Record $record */
-                foreach ($this->records[$year] as $monthRecords) {
-                    foreach ($monthRecords as $dayRecords) {
-                        foreach ($dayRecords as $record) {
-                            $i++;
-                            $sum += $record->getValue();
+                if (!empty($this->records[$year])) {
+                    foreach ($this->records[$year] as $monthRecords) {
+                        foreach ($monthRecords as $dayRecords) {
+                            foreach ($dayRecords as $record) {
+                                $i++;
+                                $sum += $record->getValue();
+                            }
                         }
                     }
                 }
