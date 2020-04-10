@@ -30,7 +30,7 @@ class DataGroup extends Group implements JsonSerializable
     /**
      * @var Group[]
      */
-    private $children;
+    private $children = [];
 
     /**
      * @param Group $child
@@ -85,12 +85,13 @@ class DataGroup extends Group implements JsonSerializable
      *
      * @param $title
      * @param string $description
+     * @param array $options
      * @return DataGroup
      * @since 1.0.0
      */
-    public function createSubGroup($title, $description = ''): DataGroup
+    public function createSubGroup(string $title, string $description = '', array $options = []): DataGroup
     {
-        $dataGroup = new self($title, $description);
+        $dataGroup = new self($title, $description, $options);
         $this->addChild($dataGroup);
         return $dataGroup;
     }
