@@ -5,7 +5,8 @@
     <tr class="big-data-table-data-group-title level-{{ level }} {{ dataGroup.getCssClass() }}">
         <td
                 {% if not dataGroup.isSumActive() %}colspan="{{ numCols }}"{% endif %}
-                {% if dataGroup.getDescription() %}data-toggle="tooltip" data-placement="left" data-title="{{ dataGroup.getDescription() }}"{% endif %}
+                {% if dataGroup.getDescription() %}data-toggle="tooltip" data-html="true" data-placement="left"
+                    data-title="{{ dataGroup.getDescription() }}"{% endif %}
         >
             <span>{{ dataGroup.getTitle() }}</span>
         </td>

@@ -2,7 +2,7 @@
 
 <tr class="{{ data.getCssClass() }}">
     <td
-            {% if data.getDescription() %}data-toggle="tooltip" data-placement="left"
+            {% if data.getDescription() %}data-toggle="tooltip" data-html="true" data-placement="left"
             data-title="{{ data.getDescription() }}"{% endif %}
     >
         <span>{{ data.getTitle() }}</span>
