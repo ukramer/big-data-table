@@ -94,6 +94,7 @@ class DataGroup extends Group implements JsonSerializable
      * @param int $year
      * @return array
      * @throws Exception
+     * @since 1.1.0
      */
     public function getDisplayedChildren(int $year): array
     {
