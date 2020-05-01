@@ -84,6 +84,17 @@ class DataGroup extends Group implements JsonSerializable
         return $this->children;
     }
 
+    /**
+     * Get filtered children by options
+     * - topView
+     *
+     * This will merge all the Data objects which have less total amount in the current year.
+     * It will show the top X (X = topView value) of the group and will merge all others to "others"
+     *
+     * @param int $year
+     * @return array
+     * @throws Exception
+     */
     public function getDisplayedChildren(int $year): array
     {
         if (!$this->getTopView()) {
