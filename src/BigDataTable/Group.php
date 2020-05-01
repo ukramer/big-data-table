@@ -13,6 +13,10 @@ use Exception;
 abstract class Group
 {
     /**
+     * @var Table
+     */
+    protected $table;
+    /**
      * @var DataGroup
      */
     protected $parent;
@@ -87,6 +91,22 @@ abstract class Group
     public function isGroup()
     {
         return $this instanceof DataGroup;
+    }
+
+    /**
+     * @return Table
+     */
+    public function getTable(): Table
+    {
+        return $this->table;
+    }
+
+    /**
+     * @param Table $table
+     */
+    public function setTable(Table $table): void
+    {
+        $this->table = $table;
     }
 
     /**

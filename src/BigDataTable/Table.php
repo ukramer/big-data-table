@@ -179,7 +179,7 @@ class Table implements JsonSerializable
      */
     public function createGroup(string $title, string $description = '', array $options = []): DataGroup
     {
-        $dataGroup = new DataGroup($title, $description, $options);
+        $dataGroup = new DataGroup($this, $title, $description, $options);
         $this->dataGroups[] = $dataGroup;
         return $dataGroup;
     }

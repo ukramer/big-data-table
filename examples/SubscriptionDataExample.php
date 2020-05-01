@@ -50,7 +50,7 @@
     $table = new Table($twigParser, ['diffYear' => 2019, 'showDiff' => true,]);
 
     $subscriptions = $table->createGroup('Subscriptions');
-    $newPaidSubscriptions = $subscriptions->addChild(new DataGroup('New paid subscriptions', 'This is a description', ['sum' => true, 'showPercentageDiff' => true]));
+    $newPaidSubscriptions = $subscriptions->addChild(new DataGroup($table, 'New paid subscriptions', 'This is a description', ['sum' => true, 'showPercentageDiff' => true]));
     foreach (['Starter', 'Plus', 'Premium'] as $product) {
         /** @var Data $data */
         $data = $newPaidSubscriptions->addData(new ScalarData($product));
@@ -67,7 +67,7 @@
         }
     }
 
-    $newUnpaidSubscriptions = $subscriptions->addChild(new DataGroup('New free subscriptions', '', ['sum' => true]));
+    $newUnpaidSubscriptions = $subscriptions->addChild(new DataGroup($table, 'New free subscriptions', '', ['sum' => true]));
     foreach (['Free', 'Trial'] as $product) {
         /** @var Data $data */
         $data = $newUnpaidSubscriptions->addData(new ScalarData($product));
@@ -86,7 +86,7 @@
 
 
     $renewals = $table->createGroup('Renewals');
-    $paidRenewals = $renewals->addChild(new DataGroup('Paid renewals', '', ['sum' => true]));
+    $paidRenewals = $renewals->addChild(new DataGroup($table, 'Paid renewals', '', ['sum' => true]));
     foreach (['Starter', 'Plus', 'Premium'] as $product) {
         /** @var Data $data */
         $data = $paidRenewals->addData(new ScalarData($product));
@@ -103,7 +103,7 @@
         }
     }
 
-    $unpaidRenewals = $renewals->addChild(new DataGroup('Free renewals', '', ['sum' => true]));
+    $unpaidRenewals = $renewals->addChild(new DataGroup($table, 'Free renewals', '', ['sum' => true]));
     foreach (['Free', 'Trial'] as $product) {
         /** @var Data $data */
         $data = $unpaidRenewals->addData(new ScalarData($product));

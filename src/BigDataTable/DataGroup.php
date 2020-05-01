@@ -3,6 +3,7 @@
 namespace BigDataTable;
 
 use BigDataTable\Data\ScalarData;
+use DateTime as DateTime;
 use Exception;
 use JsonSerializable;
 
@@ -23,6 +24,8 @@ class DataGroup extends Group implements JsonSerializable
      */
     protected $options = [
         'cssClass' => '',
+        'topView' => 0,
+        'topViewOtherLabel' => 'Others',
         'sum' => false,
         'showPercentageDiff' => false,
         'sumDataTypeFormatter' => ScalarData::class,
@@ -31,6 +34,21 @@ class DataGroup extends Group implements JsonSerializable
      * @var Group[]
      */
     private $children = [];
+
+    /**
+     * DataGroup constructor.
+     *
+     * @param Table $table
+     * @param string $title
+     * @param string $description
+     * @param array $options
+     * @since 1.1.0
+     */
+    public function __construct(Table $table, string $title, string $description = '', array $options = [])
+    {
+        parent::__construct($title, $description, $options);
+        $this->setTable($table);
+    }
 
     /**
      * @param Group $child
@@ -66,6 +84,49 @@ class DataGroup extends Group implements JsonSerializable
         return $this->children;
     }
 
+    public function getDisplayedChildren(int $year): array
+    {
+        if (!$this->getTopView()) {
+            return $this->getChildren();
+        }
+
+        /** @var Group[] $childrenBySum */
+        $childrenBySum = [];
+        foreach ($this->getChildren() as $child) {
+            $childrenBySum[$child->getSumByYear($year)] = $child;
+        }
+        krsort($childrenBySum);
+
+        $children = array_splice($childrenBySum, 0, $this->getTopView());
+
+        if (empty($childrenBySum)) {
+            return $children;
+        }
+
+        /**
+         * @var Data $other
+         */
+        $other = clone current($childrenBySum);
+        $other->setTitle($this->getTopViewOtherLabel());
+        $other->setRecords([]);
+        $children[] = $other;
+
+        foreach ($this->getTable()->getMonths() as $month) {
+            $year = intval($month['year']);
+            $month = intval($month['month']);
+
+            $date = new DateTime();
+            $date->setDate($year, $month, 1);
+            $date->setTime(0, 0, 0);
+            $sum = $other->getSumByYearAndMonth($year, $month);
+            foreach ($childrenBySum as $item) {
+                $sum += $item->getSumByYearAndMonth($year, $month);
+            }
+            $other->addRecord(new Record($date, $sum));
+        }
+        return $children;
+    }
+
     /**
      * @inheritDoc
      */
@@ -91,7 +152,7 @@ class DataGroup extends Group implements JsonSerializable
      */
     public function createSubGroup(string $title, string $description = '', array $options = []): DataGroup
     {
-        $dataGroup = new self($title, $description, $options);
+        $dataGroup = new self($this->table, $title, $description, $options);
         $this->addChild($dataGroup);
         return $dataGroup;
     }
@@ -127,6 +188,36 @@ class DataGroup extends Group implements JsonSerializable
     public function getCssClass(): string
     {
         return $this->options['cssClass'];
+    }
+
+    /**
+     * Return the value of the option "topView".
+     *
+     * @return int
+     * @since 1.1.0
+     */
+    public function getTopView(): int
+    {
+        if (!$this->options['topView']) {
+            return $this->options['topView'];
+        }
+        foreach ($this->getChildren() as $child) {
+            if (!($child instanceof Data)) {
+                return 0;
+            }
+        }
+        return $this->options['topView'];
+    }
+
+    /**
+     * Return the value of the option "topViewOtherLabel".
+     *
+     * @return string
+     * @since 1.1.0
+     */
+    public function getTopViewOtherLabel(): string
+    {
+        return $this->options['topViewOtherLabel'];
     }
 
     /**

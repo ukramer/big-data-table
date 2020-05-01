@@ -47,8 +47,8 @@
     $twigParser = new TwigParser();
     $table = new Table($twigParser, ['diffYear' => 2019, 'showDiff' => true,]);
 
-    $transactions = $table->createGroup('Transactions');
-    foreach (['CHF', 'EUR', 'USD'] as $currency) {
+    $transactions = $table->createGroup('Transactions', '', ['topView' => 3]);
+    foreach (['CHF', 'EUR', 'USD', 'PHP', 'GBP'] as $currency) {
         /** @var Data $data */
         $data = $transactions->addData(new CurrencyData($currency));
 //$data->setSumType(\BigDataTable\Data::SUM_TYPE_AVG);
