@@ -17,6 +17,6 @@ class CurrencyData extends Data
      */
     public static function format(int $value): string
     {
-        return number_format($value, 0, '', '\'');
+        return number_format($value, 0, '', '.');
     }
 }
