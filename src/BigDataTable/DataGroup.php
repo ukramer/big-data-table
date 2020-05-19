@@ -85,6 +85,30 @@ class DataGroup extends Group implements JsonSerializable
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getGrowthByYear(int $year): int
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getGrowthByYear($year);
+        }
+        return $sum;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGrowthByYearAndMonth(int $year, int $month): int
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getGrowthByYearAndMonth($year, $month);
+        }
+        return $sum;
+    }
+
+    /**
      * Get filtered children by options
      * - topView
      *
@@ -137,6 +161,36 @@ class DataGroup extends Group implements JsonSerializable
             $other->addRecord(new Record($date, $sum));
         }
         return $children;
+    }
+
+    /**
+     * Return the value of the option "topView".
+     *
+     * @return int
+     * @since 1.1.0
+     */
+    public function getTopView(): int
+    {
+        if (!$this->options['topView']) {
+            return $this->options['topView'];
+        }
+        foreach ($this->getChildren() as $child) {
+            if (!($child instanceof Data)) {
+                return 0;
+            }
+        }
+        return $this->options['topView'];
+    }
+
+    /**
+     * Return the value of the option "topViewOtherLabel".
+     *
+     * @return string
+     * @since 1.1.0
+     */
+    public function getTopViewOtherLabel(): string
+    {
+        return $this->options['topViewOtherLabel'];
     }
 
     /**
@@ -203,36 +257,6 @@ class DataGroup extends Group implements JsonSerializable
     }
 
     /**
-     * Return the value of the option "topView".
-     *
-     * @return int
-     * @since 1.1.0
-     */
-    public function getTopView(): int
-    {
-        if (!$this->options['topView']) {
-            return $this->options['topView'];
-        }
-        foreach ($this->getChildren() as $child) {
-            if (!($child instanceof Data)) {
-                return 0;
-            }
-        }
-        return $this->options['topView'];
-    }
-
-    /**
-     * Return the value of the option "topViewOtherLabel".
-     *
-     * @return string
-     * @since 1.1.0
-     */
-    public function getTopViewOtherLabel(): string
-    {
-        return $this->options['topViewOtherLabel'];
-    }
-
-    /**
      * Return the value of the option "sum".
      *
      * @return bool
@@ -255,17 +279,6 @@ class DataGroup extends Group implements JsonSerializable
     }
 
     /**
-     * Return the value of the option "sumDataTypeFormatter".
-     *
-     * @return string
-     * @since 1.0.0
-     */
-    public function getSumDataTypeFormatter(): string
-    {
-        return $this->options['sumDataTypeFormatter'];
-    }
-
-    /**
      * Format the sums of a data group.
      *
      * @param int $value
@@ -282,6 +295,17 @@ class DataGroup extends Group implements JsonSerializable
     }
 
     /**
+     * Return the value of the option "sumDataTypeFormatter".
+     *
+     * @return string
+     * @since 1.0.0
+     */
+    public function getSumDataTypeFormatter(): string
+    {
+        return $this->options['sumDataTypeFormatter'];
+    }
+
+    /**
      * @inheritDoc
      */
     public function jsonSerialize()
@@ -291,5 +315,29 @@ class DataGroup extends Group implements JsonSerializable
             'description' => $this->description,
             'children' => $this->children,
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForecastByYear(int $year): float
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getForecastByYear($year);
+        }
+        return $sum;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForecastByYearAndMonth(int $year, int $month): float
+    {
+        $sum = 0;
+        foreach ($this->getChildren() as $child) {
+            $sum += $child->getForecastByYearAndMonth($year, $month);
+        }
+        return $sum;
     }
 }

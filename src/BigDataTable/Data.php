@@ -37,6 +37,19 @@ abstract class Data extends Group implements JsonSerializable
     private $records = [];
 
     /**
+     * Format value for display in the table.
+     * This method gets overwritten by specific data objects.
+     *
+     * @param int $value The value as integer number.
+     * @return string The value as string for display in the table.
+     * @since 1.0.0
+     */
+    public static function format(int $value): string
+    {
+        return (string)$value;
+    }
+
+    /**
      * @return int
      */
     public function getSumType(): int
@@ -105,6 +118,45 @@ abstract class Data extends Group implements JsonSerializable
     /**
      * @inheritDoc
      */
+    public function getForecastByYear(int $year): float
+    {
+        $growth = $this->getGrowthByYear($year) * $this->getForecastRateByYear($year);
+        switch ($this->sumType) {
+            case self::SUM_TYPE_SUM:
+            case self::SUM_TYPE_AVG:
+                return round($growth);
+                break;
+            case self::SUM_TYPE_LAST:
+                return $growth + $this->getSumByYear($year - 1);
+                break;
+            default:
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
+                break;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGrowthByYear(int $year): int
+    {
+        switch ($this->sumType) {
+            case self::SUM_TYPE_SUM:
+            case self::SUM_TYPE_AVG:
+                return $this->getSumByYear($year);
+                break;
+            case self::SUM_TYPE_LAST:
+                return $this->getSumByYear($year) - $this->getSumByYear($year - 1);
+                break;
+            default:
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
+                break;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getSumByYear(int $year): int
     {
         switch ($this->sumType) {
@@ -168,6 +220,45 @@ abstract class Data extends Group implements JsonSerializable
     /**
      * @inheritDoc
      */
+    public function getForecastByYearAndMonth(int $year, int $month): float
+    {
+        $growth = $this->getGrowthByYearAndMonth($year, $month) * $this->getForecastRateByYearAndMonth($year, $month);
+        switch ($this->sumType) {
+            case self::SUM_TYPE_SUM:
+            case self::SUM_TYPE_AVG:
+                return $growth;
+                break;
+            case self::SUM_TYPE_LAST:
+                return $growth + $this->getSumByYearAndMonth($year - 1, $month);
+                break;
+            default:
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
+                break;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGrowthByYearAndMonth(int $year, int $month): int
+    {
+        switch ($this->sumType) {
+            case self::SUM_TYPE_SUM:
+            case self::SUM_TYPE_AVG:
+                return $this->getSumByYearAndMonth($year, $month);
+                break;
+            case self::SUM_TYPE_LAST:
+                return $this->getSumByYearAndMonth($year, $month) - $this->getSumByYearAndMonth($year - 1, $month);
+                break;
+            default:
+                throw new Exception('Sum type: ' . $this->sumType . ' not implemented');
+                break;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getSumByYearAndMonth(int $year, int $month): int
     {
         switch ($this->sumType) {
@@ -222,19 +313,6 @@ abstract class Data extends Group implements JsonSerializable
             return null;
         }
         return end(end($this->records[$year][$month]));
-    }
-
-    /**
-     * Format value for display in the table.
-     * This method gets overwritten by specific data objects.
-     *
-     * @param int $value The value as integer number.
-     * @return string The value as string for display in the table.
-     * @since 1.0.0
-     */
-    public static function format(int $value): string
-    {
-        return (string)$value;
     }
 
     /**

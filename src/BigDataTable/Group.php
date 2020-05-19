@@ -143,15 +143,10 @@ abstract class Group
     public function getDiffOfYear(int $prevYear, int $nextYear): int
     {
         $prevYearValue = $this->getSumByYear($prevYear);
-        $nextYearValue = $this->getSumByYear($nextYear);
-        $rate = 1;
-        if ($nextYear == date('Y')) {
-            $rate = 1 / (date('z') / 365);
-        }
-        $nextYearValue *= $rate;
         if ($prevYearValue === 0) {
             return 0;
         }
+        $nextYearValue = $this->getForecastByYear($nextYear);
         $diff = intval($nextYearValue / $prevYearValue * 100);
         return $diff - 100;
     }
@@ -172,6 +167,52 @@ abstract class Group
     abstract public function getSumByYear(int $year): int;
 
     /**
+     * Return the forecast of the year period if it is current year.
+     *
+     * Depending on the sumType of the data object, it will return either:
+     * SUM => the sum of all records
+     * LAST => the value of the last record - the value of the last record of previous period
+     * AVG => the calculative average of the records
+     *
+     * @param int $year
+     * @return float
+     * @throws Exception
+     * @since 1.1.2
+     */
+    abstract public function getForecastByYear(int $year): float;
+
+    /**
+     * Return the growth during the year period.
+     *
+     * Depending on the sumType of the data object, it will return either:
+     * SUM => the sum of all records
+     * LAST => the value of the last record - the value of the last record of previous period
+     * AVG => the calculative average of the records
+     *
+     * @param int $year
+     * @return int
+     * @throws Exception
+     * @since 1.1.2
+     */
+    abstract public function getGrowthByYear(int $year): int;
+
+    /**
+     * Return the growth during the year and month specified.
+     *
+     * Depending on the sumType of the data object, it will return either:
+     * SUM => the sum of all records
+     * LAST => the value of the last record - the value of the last record of previous period
+     * AVG => the calculative average of the records
+     *
+     * @param int $year
+     * @param int $month
+     * @return int
+     * @throws Exception
+     * @since 1.1.2
+     */
+    abstract public function getGrowthByYearAndMonth(int $year, int $month): int;
+
+    /**
      * Calculate the diff of the sums of a month from two different years.
      *
      * Get the value diff for percentages. This is literally a subtraction.
@@ -190,15 +231,10 @@ abstract class Group
     public function getDiffOfMonth(int $prevYear, int $nextYear, int $month): int
     {
         $prevYearValue = $this->getSumByYearAndMonth($prevYear, $month);
-        $nextYearValue = $this->getSumByYearAndMonth($nextYear, $month);
-        $rate = 1;
-        if ($nextYear == date('Y') && $month == date('m')) {
-            $rate = 1 / (date('d') / date('t'));
-        }
-        $nextYearValue *= $rate;
         if ($prevYearValue === 0) {
             return 0;
         }
+        $nextYearValue = $this->getForecastByYearAndMonth($nextYear, $month);
         $diff = intval($nextYearValue / $prevYearValue * 100);
         return $diff - 100;
     }
@@ -218,4 +254,53 @@ abstract class Group
      * @since 1.0.0
      */
     abstract public function getSumByYearAndMonth(int $year, int $month): int;
+
+    /**
+     * Return the forecast of the year and month period if it is current year and month
+     *
+     * Depending on the sumType of the data object, it will return either:
+     * SUM => the sum of all records
+     * LAST => the value of the last record - the value of the last record of previous period
+     * AVG => the calculative average of the records
+     *
+     * @param int $year
+     * @param int $month
+     * @return float
+     * @throws Exception
+     * @since 1.1.2
+     */
+    abstract public function getForecastByYearAndMonth(int $year, int $month): float;
+
+    /**
+     * Calculate the rate which has to be applied to get the forecast for current period.
+     *
+     * @param int $year
+     * @param int $month
+     * @return float
+     * @since 1.1.2
+     */
+    protected function getForecastRateByYearAndMonth(int $year, int $month): float
+    {
+        $rate = 1;
+        if ($year == date('Y') && $month == date('m')) {
+            $rate = 1 / (date('d') / date('t'));
+        }
+        return $rate;
+    }
+
+    /**
+     * Calculate the rate which has to be applied to get the forecast for current period.
+     *
+     * @param int $year
+     * @return float
+     * @since 1.1.2
+     */
+    protected function getForecastRateByYear(int $year): float
+    {
+        $rate = 1;
+        if ($year == date('Y')) {
+            $rate = 1 / (date('z') / 365);
+        }
+        return $rate;
+    }
 }
