@@ -34,7 +34,7 @@
             {% endfor %}
         {% endif %}
     </tr>
-    {% for dataSubGroup in dataGroup.getDisplayedChildren(currentYear) %}
+    {% for dataSubGroup in dataGroup.getDisplayedChildren(year[0]) %}
         {% if dataSubGroup.isGroup() %}
             {{ self.recursiveDataGroup(dataSubGroup, currentYear, currentMonth, numCols, years, months, showDiff, diffYear, level+1) }}
         {% else %}
