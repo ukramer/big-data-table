@@ -214,7 +214,12 @@ abstract class Data extends Group implements JsonSerializable
         if (empty($this->records[$year])) {
             return null;
         }
-        return end(end(end($this->records[$year])));
+        $value = $this->records[$year];
+        while (is_array($value)) {
+            $lastKey = array_key_last($value);
+            $value = $value[$lastKey];
+        }
+        return $value;
     }
 
     /**
@@ -312,7 +317,11 @@ abstract class Data extends Group implements JsonSerializable
         if (empty($this->records[$year][$month])) {
             return null;
         }
-        return end(end($this->records[$year][$month]));
+        $value = $this->records[$year][$month];
+        while (is_array($value)) {
+            $value = $value[array_key_last($value)];
+        }
+        return $value;
     }
 
     /**
